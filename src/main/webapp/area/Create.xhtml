@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AreaCreateDlg" widgetVar="AreaCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateAreaTitle}">
+            <h:form id="AreaCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{areaController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateAreaLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{areaController.selected.id}" title="#{bundle.CreateAreaTitle_id}" />
+                        <p:outputLabel value="#{bundle.CreateAreaLabel_name}" for="name" />
+                        <p:inputText id="name" value="#{areaController.selected.name}" title="#{bundle.CreateAreaTitle_name}" />
+                        <p:outputLabel value="#{bundle.CreateAreaLabel_sname}" for="sname" />
+                        <p:inputText id="sname" value="#{areaController.selected.sname}" title="#{bundle.CreateAreaTitle_sname}" />
+                        <p:outputLabel value="#{bundle.CreateAreaLabel_tname}" for="tname" />
+                        <p:inputText id="tname" value="#{areaController.selected.tname}" title="#{bundle.CreateAreaTitle_tname}" />
+                        <p:outputLabel value="#{bundle.CreateAreaLabel_parentArea}" for="parentArea" />
+                        <p:selectOneMenu id="parentArea" value="#{areaController.selected.parentArea}" >
+                            <f:selectItems value="#{areaController.itemsAvailableSelectOne}"
+                                           var="parentAreaItem"
+                                           itemValue="#{parentAreaItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateAreaLabel_areaType}" for="areaType" />
+                        <p:selectOneMenu id="areaType" value="#{areaController.selected.areaType}" 
+                                         title="#{bundle.CreateAreaTitle_areaType}" >
+                            <f:selectItems value="#{enumController.areaTypes}" ></f:selectItems>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{areaController.create}" value="#{bundle.Save}" update="display,:AreaListForm:datalist,:growl" oncomplete="handleSubmit(args,'AreaCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="AreaCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
