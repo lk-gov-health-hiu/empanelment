@@ -6,10 +6,14 @@ import lk.gov.health.hiu.empanelment.jsfs.util.JsfUtil.PersistAction;
 import lk.gov.health.hiu.empanelment.sessions.AreaFacade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
@@ -18,8 +22,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import lk.gov.health.hiu.empanelment.entities.AreaType;
 
-@Named("areaController")
+@Named
 @SessionScoped
 public class AreaController implements Serializable {
 
@@ -29,6 +34,64 @@ public class AreaController implements Serializable {
     private Area selected;
 
     public AreaController() {
+    }
+
+    public Area findArea(AreaType at, Area dis, Area dsd, String name, String sname, String tname, String aeraNumber, String areaCode) {
+        String j = "select a "
+                + " from Area a "
+                + " where a.retired=:ret ";
+        Map m = new HashMap();
+        m.put("ret", false);
+
+        if (at != null) {
+            j += " and a.areaType=:at ";
+            m.put("at", at);
+        }
+        if (dis != null) {
+            j += " and a.district=:dis ";
+            m.put("dis", dis);
+        }
+        if (dsd != null) {
+            j += " and a.dsDivision=:dsd ";
+            m.put("dsd", dsd);
+        }
+        if (name != null) {
+            j += " and a.name=:name ";
+            m.put("name", name);
+        }
+        if (sname != null) {
+            j += " and a.sname=:sname ";
+            m.put("sname", sname);
+        }
+        if (tname != null) {
+            j += " and a.tname=:tname ";
+            m.put("tname", tname);
+        }
+        if (aeraNumber != null) {
+            j += " and a.aeraNumber=:aeraNumber ";
+            m.put("aeraNumber", aeraNumber);
+        }
+        if (areaCode != null) {
+            j += " and a.areaCode=:areaCode ";
+            m.put("areaCode", areaCode);
+        }
+        System.out.println("m = " + m);
+        System.out.println("j = " + j);
+        Area a = getFacade().findFirstByJpql(j, m);
+        System.out.println("a = " + a);
+        if (a == null) {
+            a = new Area();
+            a.setAreaType(at);
+            a.setName(name);
+            a.setSname(sname);
+            a.setTname(tname);
+            a.setDistrict(dis);
+            a.setDsDivision(dsd);
+            a.setAreaCode(areaCode);
+            a.setAreaNumber(aeraNumber);
+            getFacade().create(a);
+        }
+        return a;
     }
 
     public Area getSelected() {
@@ -74,9 +137,30 @@ public class AreaController implements Serializable {
         }
     }
 
+    public List<Area> completeAreas(String qry) {
+        List<Area> tas = new ArrayList<>();
+        if (qry == null || qry.trim().equals("")) {
+            return tas;
+        }
+
+        for (Area a : getItems()) {
+            if (a.getName() != null) {
+                boolean contains = Pattern.compile(Pattern.quote(qry), Pattern.CASE_INSENSITIVE).matcher(a.getName()).find();
+                if (contains) {
+                    tas.add(a);
+                }
+
+            }
+        }
+        return tas;
+    }
+
     public List<Area> getItems() {
         if (items == null) {
-            items = getFacade().findAll();
+            String j = "select a from Area a where a.retired=:ret order by a.name";
+            Map m = new HashMap();
+            m.put("ret", false);
+            items = getFacade().findByJpql(j, m);
         }
         return items;
     }
@@ -114,11 +198,11 @@ public class AreaController implements Serializable {
     }
 
     public List<Area> getItemsAvailableSelectMany() {
-        return getFacade().findAll();
+        return getItems();
     }
 
     public List<Area> getItemsAvailableSelectOne() {
-        return getFacade().findAll();
+        return getItems();
     }
 
     @FacesConverter(forClass = Area.class)

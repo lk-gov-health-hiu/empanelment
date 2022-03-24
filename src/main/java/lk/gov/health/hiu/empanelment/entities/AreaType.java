@@ -16,4 +16,11 @@ public enum AreaType {
     Province,
     Moh,
     Phm,
+    DistrictEc,
+    DistrictSgd,
+    GnEc,
+    GnSgd,
+    DsdEc,
+    DsdSgd,
+    ;
 }

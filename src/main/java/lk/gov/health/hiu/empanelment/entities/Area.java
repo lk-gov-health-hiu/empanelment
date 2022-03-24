@@ -24,17 +24,24 @@ public class Area implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     private String name;
     private String sname;
     private String tname;
+    private String areaNumber;
+    private String areaCode;
     @ManyToOne
     private Area parentArea;
+    @ManyToOne
+    private Area referenceArea;
     @Enumerated
     private AreaType areaType;
-    
-    
-    
+    @ManyToOne
+    private Area district;
+    @ManyToOne
+    private Area dsDivision;
+
+    private boolean retired;
 
     public Long getId() {
         return id;
@@ -66,7 +73,17 @@ public class Area implements Serializable {
 
     @Override
     public String toString() {
-        return this.name;
+        String ts = "";
+        if (this.name != null) {
+            ts += this.name + "\t";
+        }
+        if (this.sname != null) {
+            ts += this.sname + "\t";
+        }
+        if (this.tname != null) {
+            ts += this.tname + "\t";
+        }
+        return ts;
     }
 
     public String getName() {
@@ -108,5 +125,53 @@ public class Area implements Serializable {
     public void setAreaType(AreaType areaType) {
         this.areaType = areaType;
     }
-    
+
+    public Area getReferenceArea() {
+        return referenceArea;
+    }
+
+    public void setReferenceArea(Area referenceArea) {
+        this.referenceArea = referenceArea;
+    }
+
+    public Area getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(Area district) {
+        this.district = district;
+    }
+
+    public Area getDsDivision() {
+        return dsDivision;
+    }
+
+    public void setDsDivision(Area dsDivision) {
+        this.dsDivision = dsDivision;
+    }
+
+    public String getAreaNumber() {
+        return areaNumber;
+    }
+
+    public void setAreaNumber(String areaNumber) {
+        this.areaNumber = areaNumber;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
+
+    public boolean isRetired() {
+        return retired;
+    }
+
+    public void setRetired(boolean retired) {
+        this.retired = retired;
+    }
+
 }
